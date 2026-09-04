@@ -1,1 +1,33 @@
 
+Step1:   Goto : https://colab.research.google.com/
+
+Step2: Create new Notebook Name : FirstAIConnect.ipynb
+
+Step3 : Add Code Block 
+       !pip install -U openai
+
+Step4 : Add Code Block 
+from openai import OpenAI
+API_KEY = "API_Key"
+
+client = OpenAI(
+    api_key=API_KEY,
+    base_url="deploymentUrl"
+)
+
+print("Client created successfully")
+
+Step 5 : Add Code Block
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[
+        {
+            "role": "user",
+            "content": "Explain Artificial Intelligence in simple English."
+        }
+    ]
+)
+
+print("CONNECTED ✅")
+print()
+print(response.choices[0].message.content)
