@@ -1,0 +1,43 @@
+Few-Short Propmting
+-------------------
+Classify the following movie reviews as Positive or Negative.
+ Follow the examples. Example 1: "I loved this movie!" → Positive 
+Example 2: "It was boring and dull." → Negative 
+Example 3: "Great acting and story!" → Positive 
+
+Now classify: "The movie was too long and not interesting."
+
+Step by Step Prompting
+----------------------
+Solve this step by step: A train travels 120 km in 2 hours. 
+What is its speed in km/h? 
+
+Show:
+ 1. The known values 
+2. The formula 
+3. The calculation 
+4. The final answer
+
+Audience Based Propmpting
+-------------------------
+Explain blockchain to a 12-year-old student. 
+Use:
+ - Simple English 
+- 5 short points 
+- One simple real-world example 
+- Avoid technical jargon
+
+
+Perspective / Multi view Prompting
+----------------------------------
+Explain the advantages and disadvantages of using electric cars. 
+Give the answer from these two perspectives: 
+1. Advantages 
+2. Disadvantages 
+
+Present the answer in a two-column table. Include points about: 
+- Cost
+ - Environment 
+- Maintenance 
+- Charging 
+- Performance
