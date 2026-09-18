@@ -12,3 +12,7 @@ cd .\Scripts\
 
 #install packages 
 pip install -U openai python-dotenv
+
+#Back to Home Directory
+Cd..
+cd..
