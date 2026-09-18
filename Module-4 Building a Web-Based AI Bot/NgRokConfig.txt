@@ -1,0 +1,15 @@
+#Download
+https://ngrok.com/download/windows?tab=download
+
+#NGrok Account
+https://dashboard.ngrok.com/login
+
+#Get Your Auth Token
+https://dashboard.ngrok.com/get-started/your-authtoken
+
+
+#Configration
+ngrok config add-authtoken <Your-Auth-Token>
+
+#Create Public URL 
+ngrok http http://127.0.0.1:8000
