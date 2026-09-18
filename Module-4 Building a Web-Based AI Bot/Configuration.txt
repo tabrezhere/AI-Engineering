@@ -1,1 +1,5 @@
+#install packages 
+python -m pip install fastapi uvicorn python-dotenv
 
+#Check Version
+python -c "import fastapi; print(fastapi.__version__)"
