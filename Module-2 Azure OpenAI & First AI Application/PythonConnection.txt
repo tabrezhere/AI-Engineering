@@ -8,7 +8,7 @@ python -m venv ISL-venv
 #activate virtual environment
 cd .\ISL-venv\
 cd .\Scripts\
-cd .\activate  
+cd activate  
 
 #install packages 
 pip install -U openai python-dotenv
