@@ -1,0 +1,67 @@
+Step 1:  go to https://chatgpt.com/ 
+prompt : https://books.toscrape.com/ scrap all the images of the book from this website and show all the images here
+
+Step 2 : https://colab.research.google.com/
+Create new file bookimages.ipynb  and below code
+
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urljoin
+import os
+
+BASE_URL = "https://books.toscrape.com/"
+OUTPUT_FOLDER = "book_images"
+
+os.makedirs(OUTPUT_FOLDER, exist_ok=True)
+
+image_count = 0
+
+for page in range(1, 51):
+
+    url = f"{BASE_URL}catalogue/page-{page}.html"
+
+    print(f"Processing page {page}/50...")
+
+    response = requests.get(url)
+    response.raise_for_status()
+
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    books = soup.select("article.product_pod")
+
+    for book in books:
+
+        image = book.find("img")
+
+        if image:
+
+            image_url = urljoin(url, image["src"])
+
+            title = image.get("alt", f"book_{image_count + 1}")
+
+            # Create safe filename
+            filename = "".join(
+                c if c.isalnum() or c in " _-" else "_"
+                for c in title
+            )
+
+            filename = f"{image_count + 1:04d}_{filename}.jpg"
+
+            file_path = os.path.join(
+                OUTPUT_FOLDER,
+                filename
+            )
+
+            image_data = requests.get(image_url)
+
+            with open(file_path, "wb") as file:
+                file.write(image_data.content)
+
+            image_count += 1
+
+            print(f"Downloaded: {filename}")
+
+print()
+print("================================")
+print(f"Total images downloaded: {image_count}")
+print("================================")
