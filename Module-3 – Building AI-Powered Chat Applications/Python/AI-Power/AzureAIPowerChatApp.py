@@ -8,9 +8,6 @@ import os
 # Azure OpenAI / OpenAI Configuration
 # --------------------------------
 
-API_KEY = ""
-BASE_URL = ""
-
 client = OpenAI(
     api_key="",
     base_url=""
