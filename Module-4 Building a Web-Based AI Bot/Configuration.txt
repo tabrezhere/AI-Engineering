@@ -3,3 +3,9 @@ python -m pip install fastapi uvicorn python-dotenv
 
 #Check Version
 python -c "import fastapi; print(fastapi.__version__)"
+
+#Run SmartAIBot
+python .\SmartAIBot.py
+
+#Load API 
+uvicorn SmartAIBot:app --reload
