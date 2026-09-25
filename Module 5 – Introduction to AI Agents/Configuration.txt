@@ -1,1 +1,10 @@
+#create new venv
+python -m venv ISL-venv
 
+#activate virtual environment
+cd .\ISL-venv\
+cd .\Scripts\
+.\activate  
+#Back to Home Directory
+cd..
+cd..
