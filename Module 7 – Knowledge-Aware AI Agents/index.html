@@ -1,0 +1,1126 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Teaching Assistant</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+          rel="stylesheet">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+
+            background:
+                radial-gradient(circle at 20% 20%, rgba(88, 101, 242, .20), transparent 30%),
+                radial-gradient(circle at 80% 80%, rgba(0, 210, 255, .15), transparent 30%),
+                linear-gradient(135deg, #080b18, #11162d 50%, #07111f);
+
+            color: white;
+            overflow: hidden;
+        }
+
+        /* --------------------------------
+           Main Container
+        -------------------------------- */
+
+        .chat-wrapper {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .chat-card {
+            width: 100%;
+            max-width: 1000px;
+            height: 92vh;
+
+            display: flex;
+            flex-direction: column;
+
+            background: rgba(15, 20, 40, .82);
+
+            border: 1px solid rgba(255,255,255,.12);
+
+            border-radius: 25px;
+
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+
+            box-shadow:
+                0 30px 80px rgba(0,0,0,.45),
+                0 0 60px rgba(74, 144, 226, .08);
+
+            overflow: hidden;
+        }
+
+        /* --------------------------------
+           Header
+        -------------------------------- */
+
+        .chat-header {
+            padding: 18px 22px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            border-bottom: 1px solid rgba(255,255,255,.08);
+
+            background: rgba(255,255,255,.03);
+        }
+
+        .bot-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .bot-avatar {
+            width: 52px;
+            height: 52px;
+
+            border-radius: 50%;
+
+            object-fit: cover;
+
+            border: 2px solid rgba(255,255,255,.25);
+
+            box-shadow:
+                0 0 20px rgba(0, 200, 255, .35);
+        }
+
+        .bot-name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .bot-status {
+            font-size: 12px;
+            color: #8ee6a8;
+        }
+
+        .status-dot {
+            display: inline-block;
+
+            width: 8px;
+            height: 8px;
+
+            background: #32d583;
+
+            border-radius: 50%;
+
+            margin-right: 5px;
+
+            box-shadow: 0 0 10px #32d583;
+        }
+
+        /* --------------------------------
+           Chat Area
+        -------------------------------- */
+
+        .chat-body {
+            flex: 1;
+
+            padding: 25px;
+
+            overflow-y: auto;
+
+            scroll-behavior: smooth;
+        }
+
+        .chat-body::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-body::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,.15);
+            border-radius: 10px;
+        }
+
+        /* --------------------------------
+           Messages
+        -------------------------------- */
+
+        .message-row {
+            display: flex;
+
+            margin-bottom: 22px;
+
+            animation: messageIn .35s ease;
+        }
+
+        @keyframes messageIn {
+
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-row.user {
+            justify-content: flex-end;
+        }
+
+        .message-row.bot {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            max-width: 75%;
+        }
+
+        .bot-message-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+
+            border-radius: 50%;
+
+            object-fit: cover;
+
+            flex-shrink: 0;
+        }
+
+        .message {
+            padding: 13px 17px;
+
+            border-radius: 18px;
+
+            line-height: 1.6;
+
+            font-size: 15px;
+
+            white-space: pre-wrap;
+
+            word-break: break-word;
+        }
+
+        .user .message {
+            background:
+                linear-gradient(135deg, #5865f2, #7658f2);
+
+            border-bottom-right-radius: 5px;
+
+            box-shadow:
+                0 8px 25px rgba(88,101,242,.25);
+        }
+
+        .bot .message {
+            background: rgba(255,255,255,.075);
+
+            border: 1px solid rgba(255,255,255,.08);
+
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-time {
+            font-size: 10px;
+
+            opacity: .45;
+
+            margin-top: 5px;
+        }
+
+        .user .message-time {
+            text-align: right;
+        }
+
+        /* --------------------------------
+           Typing Indicator
+        -------------------------------- */
+
+        .typing {
+            display: none;
+
+            align-items: center;
+
+            gap: 10px;
+
+            margin-bottom: 20px;
+        }
+
+        .typing-bubble {
+            background: rgba(255,255,255,.08);
+
+            border: 1px solid rgba(255,255,255,.08);
+
+            padding: 13px 17px;
+
+            border-radius: 18px;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #b8c7ff;
+
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: .2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: .4s;
+        }
+
+        @keyframes typing {
+
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: .4;
+            }
+
+            30% {
+                transform: translateY(-6px);
+                opacity: 1;
+            }
+        }
+
+        /* --------------------------------
+           Input Area
+        -------------------------------- */
+
+        .chat-footer {
+            padding: 18px;
+
+            border-top: 1px solid rgba(255,255,255,.08);
+
+            background: rgba(0,0,0,.12);
+        }
+
+        .input-container {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            padding: 7px 8px 7px 16px;
+
+            border-radius: 18px;
+
+            background: rgba(255,255,255,.06);
+
+            border: 1px solid rgba(255,255,255,.1);
+
+            transition: .25s;
+        }
+
+        .input-container:focus-within {
+
+            border-color: rgba(100,160,255,.65);
+
+            box-shadow:
+                0 0 20px rgba(70,130,255,.15);
+        }
+
+        #messageInput {
+
+            flex: 1;
+
+            background: transparent;
+
+            border: none;
+
+            outline: none;
+
+            color: white;
+
+            font-size: 15px;
+
+            padding: 10px 0;
+        }
+
+        #messageInput::placeholder {
+            color: rgba(255,255,255,.45);
+        }
+
+        #sendButton {
+
+            width: 46px;
+            height: 46px;
+
+            border: none;
+
+            border-radius: 14px;
+
+            background:
+                linear-gradient(135deg,#5865f2,#4b8df8);
+
+            color: white;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            cursor: pointer;
+
+            transition: .25s;
+
+            box-shadow:
+                0 6px 20px rgba(75,100,240,.3);
+        }
+
+        #sendButton:hover {
+
+            transform: translateY(-2px) scale(1.03);
+
+            box-shadow:
+                0 10px 30px rgba(75,100,240,.45);
+        }
+
+        #sendButton:disabled {
+
+            opacity: .5;
+
+            cursor: not-allowed;
+
+            transform: none;
+        }
+
+        /* --------------------------------
+           Glitter
+        -------------------------------- */
+
+        .sparkle {
+
+            position: fixed;
+
+            width: 5px;
+            height: 5px;
+
+            background: white;
+
+            border-radius: 50%;
+
+            pointer-events: none;
+
+            z-index: 9999;
+
+            animation: sparkleAnimation 800ms ease-out forwards;
+        }
+
+        @keyframes sparkleAnimation {
+
+            0% {
+
+                transform:
+                    translate(0,0)
+                    scale(1);
+
+                opacity: 1;
+
+            }
+
+            100% {
+
+                transform:
+                    translate(
+                        var(--x),
+                        var(--y)
+                    )
+                    scale(0);
+
+                opacity: 0;
+
+            }
+        }
+
+        /* --------------------------------
+           Welcome Message
+        -------------------------------- */
+
+        .welcome {
+
+            text-align: center;
+
+            padding: 30px 10px;
+
+            opacity: .9;
+        }
+
+        .welcome-icon {
+
+            width: 75px;
+            height: 75px;
+
+            border-radius: 50%;
+
+            margin: 0 auto 15px;
+
+            box-shadow:
+                0 0 30px rgba(80,160,255,.3);
+        }
+
+        .welcome h4 {
+            margin-bottom: 8px;
+        }
+
+        .welcome p {
+
+            color: rgba(255,255,255,.55);
+
+            font-size: 14px;
+        }
+
+        /* --------------------------------
+           Mobile
+        -------------------------------- */
+
+        @media(max-width: 768px) {
+
+            body {
+                overflow: hidden;
+            }
+
+            .chat-wrapper {
+                padding: 0;
+            }
+
+            .chat-card {
+
+                height: 100vh;
+
+                border-radius: 0;
+
+                max-width: none;
+            }
+
+            .chat-header {
+                padding: 14px 16px;
+            }
+
+            .chat-body {
+                padding: 18px 14px;
+            }
+
+            .message-content {
+                max-width: 85%;
+            }
+
+            .message {
+                font-size: 14px;
+            }
+
+            .bot-avatar {
+                width: 44px;
+                height: 44px;
+            }
+
+            .chat-footer {
+                padding: 12px;
+            }
+
+            .welcome {
+                padding-top: 20px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="chat-wrapper">
+
+    <div class="chat-card">
+
+        <!-- HEADER -->
+
+        <div class="chat-header">
+
+            <div class="bot-header">
+
+                <img
+                    src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png"
+                    class="bot-avatar"
+                    alt="AI">
+
+                <div>
+
+                    <div class="bot-name">
+                        AI Teaching Assistant
+                    </div>
+
+                    <div class="bot-status">
+
+                        <span class="status-dot"></span>
+
+                        Online & Ready
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <i class="bi bi-stars fs-4 text-info"></i>
+
+        </div>
+
+
+        <!-- CHAT -->
+
+        <div id="chatBody" class="chat-body">
+
+            <div class="welcome">
+
+                <img
+                    src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png"
+                    class="welcome-icon"
+                    alt="AI">
+
+                <h4>
+                    Hello! 👋
+                </h4>
+
+                <p>
+                    I'm your AI Teaching Assistant.
+                    Ask me anything and I'll help you.
+                </p>
+
+            </div>
+
+
+            <!-- Typing -->
+
+            <div id="typingIndicator" class="typing">
+
+                <img
+                    src="https://cdn-icons-png.flaticon.com/512/4712/4712109.png"
+                    class="message-avatar"
+                    alt="AI">
+
+                <div class="typing-bubble">
+
+                    <div class="typing-dots">
+
+                        <span></span>
+                        <span></span>
+                        <span></span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- INPUT -->
+
+        <div class="chat-footer">
+
+            <div class="input-container">
+
+                <input
+                    type="text"
+                    id="messageInput"
+                    placeholder="Ask your question..."
+                    autocomplete="off">
+
+                <button
+                    id="sendButton"
+                    onclick="sendMessage()">
+
+                    <i class="bi bi-send-fill"></i>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    const API_URL = "http://localhost:8000/chat";
+
+    const BOT_IMAGE =
+        "https://cdn-icons-png.flaticon.com/512/4712/4712109.png";
+
+
+    const input =
+        document.getElementById("messageInput");
+
+    const chatBody =
+        document.getElementById("chatBody");
+
+    const typingIndicator =
+        document.getElementById("typingIndicator");
+
+    const sendButton =
+        document.getElementById("sendButton");
+
+
+    /* --------------------------------
+       Enter Key
+    -------------------------------- */
+
+    input.addEventListener("keydown", function(event) {
+
+        if (event.key === "Enter") {
+
+            event.preventDefault();
+
+            sendMessage();
+
+        }
+
+    });
+
+
+    /* --------------------------------
+       Send Message
+    -------------------------------- */
+
+    async function sendMessage() {
+
+        const message =
+            input.value.trim();
+
+        if (!message)
+            return;
+
+
+        createSparkles();
+
+
+        addUserMessage(message);
+
+
+        input.value = "";
+
+
+        setTyping(true);
+
+
+        sendButton.disabled = true;
+
+
+        try {
+
+            const response =
+                await fetch(API_URL, {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        question: message
+
+                    })
+
+                });
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "API returned " + response.status
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            setTyping(false);
+
+
+            /*
+                Change this depending on
+                your FastAPI response.
+
+                Example:
+
+                {
+                    "response": "Hello"
+                }
+
+                or
+
+                {
+                    "answer": "Hello"
+                }
+            */
+
+            const botResponse =
+                data.response ??
+                data.answer ??
+                data.message ??
+                JSON.stringify(data);
+
+
+            addBotMessage(botResponse);
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            setTyping(false);
+
+            addBotMessage(
+                "⚠️ Unable to connect to the AI service. Please make sure the FastAPI server is running."
+            );
+
+        }
+
+        finally {
+
+            sendButton.disabled = false;
+
+            input.focus();
+
+        }
+
+    }
+
+
+    /* --------------------------------
+       User Message
+    -------------------------------- */
+
+    function addUserMessage(message) {
+
+        removeWelcome();
+
+
+        const row =
+            document.createElement("div");
+
+        row.className =
+            "message-row user";
+
+
+        const content =
+            document.createElement("div");
+
+        content.className =
+            "message-content";
+
+
+        const bubble =
+            document.createElement("div");
+
+        bubble.className =
+            "message";
+
+        bubble.textContent =
+            message;
+
+
+        const time =
+            document.createElement("div");
+
+        time.className =
+            "message-time";
+
+        time.textContent =
+            getTime();
+
+
+        content.appendChild(bubble);
+
+        content.appendChild(time);
+
+        row.appendChild(content);
+
+
+        chatBody.insertBefore(
+            row,
+            typingIndicator
+        );
+
+
+        scrollToBottom();
+
+    }
+
+
+    /* --------------------------------
+       Bot Message
+    -------------------------------- */
+
+    function addBotMessage(message) {
+
+        const row =
+            document.createElement("div");
+
+        row.className =
+            "message-row bot";
+
+
+        const wrapper =
+            document.createElement("div");
+
+        wrapper.className =
+            "bot-message-wrapper";
+
+
+        const avatar =
+            document.createElement("img");
+
+        avatar.src =
+            BOT_IMAGE;
+
+        avatar.className =
+            "message-avatar";
+
+        avatar.alt =
+            "AI";
+
+
+        const content =
+            document.createElement("div");
+
+        content.className =
+            "message-content";
+
+
+        const bubble =
+            document.createElement("div");
+
+        bubble.className =
+            "message";
+
+        bubble.textContent =
+            message;
+
+
+        const time =
+            document.createElement("div");
+
+        time.className =
+            "message-time";
+
+        time.textContent =
+            getTime();
+
+
+        content.appendChild(bubble);
+
+        content.appendChild(time);
+
+
+        wrapper.appendChild(avatar);
+
+        wrapper.appendChild(content);
+
+        row.appendChild(wrapper);
+
+
+        chatBody.insertBefore(
+            row,
+            typingIndicator
+        );
+
+
+        scrollToBottom();
+
+    }
+
+
+    /* --------------------------------
+       Typing Indicator
+    -------------------------------- */
+
+    function setTyping(show) {
+
+        typingIndicator.style.display =
+            show ? "flex" : "none";
+
+
+        if (show) {
+
+            scrollToBottom();
+
+        }
+
+    }
+
+
+    /* --------------------------------
+       Remove Welcome
+    -------------------------------- */
+
+    function removeWelcome() {
+
+        const welcome =
+            document.querySelector(".welcome");
+
+        if (welcome)
+            welcome.remove();
+
+    }
+
+
+    /* --------------------------------
+       Scroll
+    -------------------------------- */
+
+    function scrollToBottom() {
+
+        setTimeout(() => {
+
+            chatBody.scrollTop =
+                chatBody.scrollHeight;
+
+        }, 50);
+
+    }
+
+
+    /* --------------------------------
+       Time
+    -------------------------------- */
+
+    function getTime() {
+
+        return new Date()
+            .toLocaleTimeString([], {
+
+                hour: "2-digit",
+
+                minute: "2-digit"
+
+            });
+
+    }
+
+
+    /* --------------------------------
+       Glitter Effect
+    -------------------------------- */
+
+    function createSparkles() {
+
+        const button =
+            sendButton.getBoundingClientRect();
+
+
+        const centerX =
+            button.left +
+            button.width / 2;
+
+        const centerY =
+            button.top +
+            button.height / 2;
+
+
+        for (let i = 0; i < 18; i++) {
+
+            const sparkle =
+                document.createElement("div");
+
+
+            sparkle.className =
+                "sparkle";
+
+
+            sparkle.style.left =
+                centerX + "px";
+
+            sparkle.style.top =
+                centerY + "px";
+
+
+            const angle =
+                Math.random() *
+                Math.PI * 2;
+
+
+            const distance =
+                30 +
+                Math.random() * 80;
+
+
+            sparkle.style.setProperty(
+                "--x",
+                Math.cos(angle) *
+                distance + "px"
+            );
+
+
+            sparkle.style.setProperty(
+                "--y",
+                Math.sin(angle) *
+                distance + "px"
+            );
+
+
+            document.body.appendChild(
+                sparkle
+            );
+
+
+            setTimeout(() => {
+
+                sparkle.remove();
+
+            }, 800);
+
+        }
+
+    }
+
+</script>
+
+</body>
+</html>
+```
