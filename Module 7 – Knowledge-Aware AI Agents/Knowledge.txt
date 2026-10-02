@@ -1,0 +1,35 @@
+AI Engineering Program
+
+Module 1:
+Introduction to Artificial Intelligence
+
+Students will learn:
+- What is Artificial Intelligence?
+- Traditional AI
+- Generative AI
+- Large Language Models
+- Prompt Engineering
+
+Module 2:
+Microsoft Azure AI
+
+Students will learn:
+- Azure OpenAI
+- Azure AI Foundry
+- Models
+- Deployments
+- API authentication
+- Python integration
+
+Module 5:
+AI Agents
+
+Students will learn:
+- What is an AI Agent?
+- Chatbot vs AI Agent
+- Agent instructions
+- Agent goals
+- Agent context
+- Agent decision making.
+
+
