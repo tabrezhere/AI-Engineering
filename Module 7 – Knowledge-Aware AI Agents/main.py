@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
+from fastapi.middleware.cors import CORSMiddleware
 
 # --------------------------------
 # Load environment variables
@@ -27,6 +28,16 @@ app = FastAPI(
     description="AI Teaching Agent REST API",
     version="1.0"
 )
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+
 
 # --------------------------------
 # Read Knowledge content
