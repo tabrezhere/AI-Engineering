@@ -5,6 +5,7 @@ import json
 from openai import OpenAI
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 # =========================================
@@ -22,7 +23,17 @@ app = FastAPI(
     title="Multi-Agent AI System",
     description="Billing, Loan and Network Agents"
 )
+# ==============================
+# CORS
+# ==============================
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # =========================================
 # 2. Common AI Function
